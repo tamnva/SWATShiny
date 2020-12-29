@@ -42,7 +42,7 @@ getDate <- function(TxtInOut){
 }
 
 #-------------------------------------------------------------------------------
-# Convert data in watout.dat to matrix of size [nrow = ndays, ncol = nhrus]
+# Convert data in output.hru to matrix of size [nrow = ndays, ncol = nhrus]
 ListOutputHRU <- function(outputHRU){
   
   hru <- outputHRU[c(2)]
@@ -71,6 +71,7 @@ ListOutputHRU <- function(outputHRU){
   
   return(mylist)
 }
+
 
 #-------------------------------------------------------Get header of output.hru
 getHRUheader <- function(TxtInOut){
@@ -122,4 +123,32 @@ agg <- function(idata, time, method){
   }
   
   return(result)
+}
+
+#-------------------------------------------------------------------------------
+# Convert data in watout.dat to matrix of size [nrow = ndays, ncol = nfiles]
+watoutData <- function(watoutFiles, column){
+  
+  watout <- list()
+  
+  for (i in 1:length(watoutFiles)){
+    mydata <- read.table(watoutFiles[1] , 
+                         header = FALSE,
+                         sep = "",
+                         skip = 6
+    ) 
+    
+    if(i == length(watoutFiles)) {
+      sdate <- as.Date(paste(mydata[1,1],"0101", sep=""), "%Y%m%d") + 
+        + mydata[1,2] - 1
+      edate <- as.Date(paste(mydata[dim(mydata)[1],1],"0101", sep=""), "%Y%m%d") + 
+        + mydata[dim(mydata)[1],2] - 1 
+      
+      watout[[i+1]] <- seq(sdate, edate, by ="days")
+      
+    }
+    watout[[i]] <- mydata[, col]
+  }
+  
+  return(watout)
 }

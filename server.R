@@ -11,7 +11,8 @@ server <- function(input, output,session) {
     HTML(paste(str1, str2, str3, sep = '<br/>'))
     
   })
-  
+
+    
   #Plot HRU map
   output$plotHRUmap <- renderPlot({
     hru_raster <-  raster(paste(input$Watershed, "/Grid/hrus1/w001001.adf", sep = ""))
@@ -19,30 +20,34 @@ server <- function(input, output,session) {
                                        font = 1, line = 2.5, cex = 0.8))
   })
   
-  #Plot Subbasin
-#  output$plotSubbasin <- renderPlot({
-#    subbasin <-  shapefile(paste(input$Watershed, "/Shapes/subs1.shp", sep = ""))
-#    plot(subbasin)
-#  })
   
-  #Plot Simulated Streamflow
+  #*****************************************************************************
+  #***************************************************************************** 
+  # --------------------------------------------------------get watout.dat data
+  getWatoutData <- reactive({
+    watoutData(input$watoutFiles$datapath, 4)
+  }) 
+  
+  
+  #--------------------------------------------------------------Plot watout.dat
   output$plotQ <- renderPlot({
-    watout <- read.table("./testData/TxtInOut/watout.dat" , header = FALSE,
-                         sep = "",skip = 6)
-    start.date <- as.Date(paste(watout[1,1],"0101", sep=""), "%Y%m%d")
-    start.date <- start.date + watout[1,2] - 1
+#    watout <- read.table("./testData/TxtInOut/watout.dat" , header = FALSE,
+#                         sep = "",skip = 6)
+#    start.date <- as.Date(paste(watout[1,1],"0101", sep=""), "%Y%m%d")
+#    start.date <- start.date + watout[1,2] - 1
     
-    time <- seq(start.date, start.date + length(watout[,1])-1, by ="days")
-    watout.extract <- watout[,4]
+#    time <- seq(start.date, start.date + length(watout[,1])-1, by ="days")
+#    watout.extract <- watout[,4]
     
-    s.date <- which(time == input$dateRange[1])
-    e.date <- which(time == input$dateRange[2])
+#    s.date <- which(time == input$dateRange[1])
+#    e.date <- which(time == input$dateRange[2])
     
-    plot(time[s.date:e.date], watout.extract[s.date:e.date], type ="l", col = 2)
+    plot(getWatoutData()[[2]], getWatoutData()[[1]], type ="l", col = 2)
   })
-  
-  # ----------------------------------------------------------------------------
- 
+
+    
+  #*****************************************************************************
+  #***************************************************************************** 
   # --------------------------------------------------------Read hru raster file
   hruRaster <- reactive({
     raster(paste(input$visualWatershed, 
@@ -88,9 +93,7 @@ server <- function(input, output,session) {
                     max = mydate[2], 
                     value = mydate[1]
     )
-  }) 
-  #*****************************************************************************
-    
+  })
   
   # --------------------------------------------------------Read output.hru data
   outputHRU <- reactive({
@@ -113,13 +116,26 @@ server <- function(input, output,session) {
   
   outputText <- reactive({
     if (input$select_temp == 1){
-      text <- paste("You have selected to plot HRU output on  ", input$plot_date_month_hru, sep = "")
+      text <- paste("You have selected to plot HRU output on  ", 
+                    input$plot_date_month_hru, sep = ""
+                    )
     } else if (input$select_temp == 2){
-      text <- paste("You have selected to plot HRU output for month  ", strftime(input$plot_date_month_hru, "%m"), "/", strftime(input$plot_date_month_hru, "%Y"), sep = "")
+      text <- paste("You have selected to plot HRU output for month  ", 
+                    strftime(input$plot_date_month_hru, "%m"), 
+                    "/", strftime(input$plot_date_month_hru, "%Y"), 
+                    sep = ""
+                    )
     } else if (input$select_temp == 3){
-      text <- paste("You have selected to plot HRU output for the year ", strftime(input$plot_date_month_hru, "%Y"), sep = "")
+      text <- paste("You have selected to plot HRU output for the year ", 
+                    strftime(input$plot_date_month_hru, "%Y"), 
+                    sep = ""
+                    )
     } else if (input$select_temp == 4){
-      text <- paste("You have selected to plot sum HRU output from ", input$date_range_hru[1], " to ", input$date_range_hru[2], sep = "")
+      text <- paste("You have selected to plot sum HRU output from ", 
+                    input$date_range_hru[1], 
+                    " to ", 
+                    input$date_range_hru[2], sep = ""
+                    )
     }
   })
 

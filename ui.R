@@ -139,6 +139,7 @@ ui <- dashboardPage(
       tabItem(tabName = "watout",
               
               # Input data -----------------------------------------------------
+              
               fluidRow(             
                 column(width = 4,
                        fileInput("watoutFiles",
@@ -161,7 +162,6 @@ ui <- dashboardPage(
                 )
               ),
               
-              
               fluidRow(
                 box(width = 12,
                   sliderInput("dateRange", 
@@ -174,10 +174,15 @@ ui <- dashboardPage(
                   ),
               ),
               
-              tags$br(),  # Line break              
+              tags$br(),  # Line break
+              
               fluidRow(
                 box(title = "Simulated streamflow (m3/s)", status = "success", height = "600" ,solidHeader = T,
-                    plotOutput("plotQ",height = "540"), width = 6),
+                    checkboxInput("display", "Display Plot"),
+                    conditionalPanel(
+                      condition = "input.display == true",
+                      plotOutput("plotQ",height = "540"), width = 6)
+                    )
               ),
       )
     )
