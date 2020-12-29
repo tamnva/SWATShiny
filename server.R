@@ -36,13 +36,18 @@ server <- function(input, output,session) {
 #    sdate <- which(time == input$dateRange[1])
 #    edate <- which(time == input$dateRange[2])
     
+    simTime <- getWatoutData()[[length(getWatoutData())]]
+    watout <- getWatoutData()[[1]]
+    sIndex <- which(simTime == input$dateRange[1])
+    eIndex <- which(simTime == input$dateRange[2])
     
- #    sim <- getWatoutData()[[1]]
-#     ObsWatout
+#   ObsWatout
     
-    plot(getWatoutData()[[2]], getWatoutData()[[1]], type ="l", col = 2)
+    plot(simTime[sIndex:eIndex],watout[sIndex:eIndex], type ="l", col = 2)
     
   })
+  
+
 
   # ------------------------------------------------------Update select variable
   observe({
