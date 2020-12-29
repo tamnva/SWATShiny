@@ -173,17 +173,22 @@ ui <- dashboardPage(
                               )
                   ),
               ),
+              textOutput("listSaveconcFiles"),
               
               tags$br(),  # Line break
-              
-              fluidRow(
-                box(title = "Simulated streamflow (m3/s)", status = "success", height = "600" ,solidHeader = T,
-                    checkboxInput("display", "Display Plot"),
-                    conditionalPanel(
-                      condition = "input.display == true",
-                      plotOutput("plotQ",height = "540"), width = 6)
-                    )
-              ),
+              lapply(1:3, function(iter) {
+                fluidRow(
+                  box( status = NULL, width = 12 ,solidHeader = F,
+                       checkboxInput(paste("display", iter, sep =""), 
+                                     paste("Display plot from saveconc file ", iter, sep ="")
+                                     ),
+                       conditionalPanel(
+                         condition = paste("input.display", iter," == true", sep =""),
+                         plotOutput(paste("plotQ", iter, sep =""))
+                         )
+                  )
+                )
+              })
       )
     )
   ) 

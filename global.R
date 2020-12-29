@@ -82,11 +82,28 @@ getHRUheader <- function(TxtInOut){
   return(HRUheader)
 }
 
+#-------------------------------------------------------Get observed data from file to compare with watout
+getObsWatout <- function(obsWatoutFile){
+  mydata <- read.table(obsWatoutFile , 
+                       header = TRUE,
+                       sep = ""
+  )
+  mydata[,1] <- as.Date(mydata[,1], "%Y-%m-%d")
+  return(mydata)
+}
+
 #--------------------------------------------------------------Get watout header
 getWatoutHeader <- function(watout){
   
   WatoutHeader <- readLines(watout, 6)
   WatoutHeader <- strsplit(WatoutHeader[6], "\\s+")[[1]]
+  WatoutHeader <- WatoutHeader[WatoutHeader != ""]
+  
+  # there is no space between element 17 and later on in watout file
+  WatoutHeader <- c(WatoutHeader[1:17],
+                    paste(strsplit(WatoutHeader[18],"/L")[[1]], "/L", sep=""),
+                    WatoutHeader[19:length(WatoutHeader)]
+  )
   
   return(WatoutHeader)
 }
@@ -147,7 +164,7 @@ watoutData <- function(watoutFiles, column){
       watout[[i+1]] <- seq(sdate, edate, by ="days")
       
     }
-    watout[[i]] <- mydata[, col]
+    watout[[i]] <- mydata[, column]
   }
   
   return(watout)

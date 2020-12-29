@@ -25,27 +25,55 @@ server <- function(input, output,session) {
   #***************************************************************************** 
   # --------------------------------------------------------get watout.dat data
   getWatoutData <- reactive({
-    watoutData(input$watoutFiles$datapath, 4)
+    watoutData(input$watoutFiles$datapath, getColWatout())
   }) 
   
   
   #--------------------------------------------------------------Plot watout.dat
-  output$plotQ <- renderPlot({
-#    watout <- read.table("./testData/TxtInOut/watout.dat" , header = FALSE,
-#                         sep = "",skip = 6)
-#    start.date <- as.Date(paste(watout[1,1],"0101", sep=""), "%Y%m%d")
-#    start.date <- start.date + watout[1,2] - 1
-    
-#    time <- seq(start.date, start.date + length(watout[,1])-1, by ="days")
-#    watout.extract <- watout[,4]
-    
-#    s.date <- which(time == input$dateRange[1])
-#    e.date <- which(time == input$dateRange[2])
-    
-    plot(getWatoutData()[[2]], getWatoutData()[[1]], type ="l", col = 2)
-  })
+  output$plotQ1 <- renderPlot({
 
     
+#    sdate <- which(time == input$dateRange[1])
+#    edate <- which(time == input$dateRange[2])
+    
+    
+ #    sim <- getWatoutData()[[1]]
+#     ObsWatout
+    
+    plot(getWatoutData()[[2]], getWatoutData()[[1]], type ="l", col = 2)
+    
+  })
+
+  # ------------------------------------------------------Update select variable
+  observe({
+    # Get watout Header from first watout file
+    if (length(input$watoutFiles$datapath) >= 1){
+      file <- input$watoutFiles$datapath
+      watoutHeader <- getWatoutHeader(file[1])
+      updateSelectizeInput(session, "selectWatoutCol",
+                           choices = watoutHeader[4:length(watoutHeader)],
+                           selected = NULL
+      )      
+    }
+
+  })
+
+  # -------------------------------------------------Get column number for plot
+  getColWatout <- reactive({
+    selectedColumn <- 0
+    if (length(input$watoutFiles$datapath) >= 1){
+      selectedColumn <- which(getWatoutHeader(input$watoutFiles$datapath[1]) 
+                              == input$selectWatoutCol
+                              )
+    }
+    selectedColumn
+  })
+  
+  # -------------------------------------------------Get observed data for watout
+  ObsWatout <- reactive({
+    getObsWatout(input$observedSaveconcFiles)
+  })
+  
   #*****************************************************************************
   #***************************************************************************** 
   # --------------------------------------------------------Read hru raster file
@@ -211,11 +239,21 @@ server <- function(input, output,session) {
   
   # --------------------------------------------------------Temporal aggregation 
   
-  
   #Plot HRU map
   output$plotHRUoutput <- renderPlot({
     plot(aggHRU(), title("Spatial diss"))
   })  
   
+  # ------------------------------------------------------List of saveconc files   
+  output$listSaveconcFiles <- renderText({
+    outText <- ""
+    for (i in 1:length(input$watoutFiles$name)){
+      outText <- paste(outText, "File ", i, " = ","'", input$watoutFiles$name[i],"'", " ", sep = "")
+    }
+    outText <- input$watoutFiles$name
+  })
   
+  #observe({
+  #updateCheckboxInput(session, inputId = "display1", label = input$listSaveconcFiles[1])
+  #})
 }
