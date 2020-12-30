@@ -32,22 +32,32 @@ server <- function(input, output,session) {
   #--------------------------------------------------------------Plot watout.dat
   output$plotQ1 <- renderPlot({
 
-    
-#    sdate <- which(time == input$dateRange[1])
-#    edate <- which(time == input$dateRange[2])
-    
     simTime <- getWatoutData()[[length(getWatoutData())]]
     watout <- getWatoutData()[[1]]
     sIndex <- which(simTime == input$dateRange[1])
     eIndex <- which(simTime == input$dateRange[2])
-    
 #   ObsWatout
     
     plot(simTime[sIndex:eIndex],watout[sIndex:eIndex], type ="l", col = 2)
     
   })
   
-
+  output$plotQ2 <- renderPlot({
+    
+    
+    #    sdate <- which(time == input$dateRange[1])
+    #    edate <- which(time == input$dateRange[2])
+    
+    simTime <- getWatoutData()[[length(getWatoutData())]]
+    watout <- getWatoutData()[[2]]
+    sIndex <- which(simTime == input$dateRange[1])
+    eIndex <- which(simTime == input$dateRange[2])
+    
+    #   ObsWatout
+    
+    plot(simTime[sIndex:eIndex],watout[sIndex:eIndex], type ="l", col = 2)
+    
+  })
 
   # ------------------------------------------------------Update select variable
   observe({
