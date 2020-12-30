@@ -1,10 +1,5 @@
 
 
-# Load packages
-library(shinydashboard)
-library(shinyFiles)
-
-
 # Create UI
 ui <- dashboardPage(
   
@@ -184,7 +179,7 @@ ui <- dashboardPage(
                                      ),
                        conditionalPanel(
                          condition = paste("input.display", iter," == true", sep =""),
-                         plotOutput(paste("plotQ", iter, sep =""))
+                         plotlyOutput(paste("plotQ", iter, sep =""))
                          )
                   )
                 )

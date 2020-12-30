@@ -5,6 +5,9 @@
 
 library(raster)
 library(rgdal)
+library(plotly)
+library(shinydashboard)
+library(shinyFiles)
 
 # ------------------------------------------------------------------------------
 getDate <- function(TxtInOut){

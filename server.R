@@ -30,7 +30,7 @@ server <- function(input, output,session) {
   
   
   #--------------------------------------------------------------Plot watout.dat
-  output$plotQ1 <- renderPlot({
+  output$plotQ1 <- renderPlotly({
 
     simTime <- getWatoutData()[[length(getWatoutData())]]
     watout <- getWatoutData()[[1]]
@@ -38,7 +38,10 @@ server <- function(input, output,session) {
     eIndex <- which(simTime == input$dateRange[2])
 #   ObsWatout
     
-    plot(simTime[sIndex:eIndex],watout[sIndex:eIndex], type ="l", col = 2)
+    plot_ly(x = ~simTime[sIndex:eIndex],
+            y = ~watout[sIndex:eIndex], 
+            type = 'scatter',
+            color = I("red"))
     
   })
   
@@ -268,7 +271,4 @@ server <- function(input, output,session) {
     outText <- input$watoutFiles$name
   })
   
-  #observe({
-  #updateCheckboxInput(session, inputId = "display1", label = input$listSaveconcFiles[1])
-  #})
 }
