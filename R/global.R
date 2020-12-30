@@ -46,7 +46,7 @@ getDate <- function(TxtInOut){
 
 #-------------------------------------------------------------------------------
 # Convert data in output.hru to matrix of size [nrow = ndays, ncol = nhrus]
-ListOutputHRU <- function(outputHRU){
+getOutputHru <- function(outputHRU){
   
   hru <- outputHRU[c(2)]
   nhrus <- max(hru)
