@@ -37,10 +37,10 @@ watoutUI <- function(id) {
       box(width = 12,
           sliderInput(ns("dateRange"), 
                       "Select range to plot", 
-                      value = c(as.Date("1990-06-01","%Y-%m-%d"), 
-                                as.Date("1993-10-01","%Y-%m-%d")), 
-                      min = as.Date("1990-06-01","%Y-%m-%d"), 
-                      max = as.Date("1993-10-01","%Y-%m-%d")
+                      value = c(as.Date("1990-01-01","%Y-%m-%d"), 
+                                as.Date("2020-12-31","%Y-%m-%d")), 
+                      min = as.Date("1990-01-01","%Y-%m-%d"), 
+                      max = as.Date("2020-12-31","%Y-%m-%d")
           )
       ),
     ),

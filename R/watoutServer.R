@@ -9,6 +9,9 @@ watoutServer <- function(id) {
                  #--------------------------------------------------------------
                  # -----------------------------------------List of watout files   
                  output$listWatoutFiles <- renderText({
+                   
+                   req(input$watoutFiles)
+                   
                    outText <- ""
                    for (i in 1:length(input$watoutFiles$name)){
                      outText <- paste(outText, 
@@ -24,7 +27,8 @@ watoutServer <- function(id) {
                    }
                    outText
                  }) 
-                 
+                   
+
                  # -----------------------------------Get column number for plot
                  getColWatout <- reactive({
                    selectedColumn <- 0
@@ -40,6 +44,19 @@ watoutServer <- function(id) {
                  getWatoutData <- reactive({
                    watoutData(input$watoutFiles$datapath, getColWatout())
                  }) 
+                 
+                 # --------------------------------------Update input date range                 
+                 observe({
+                   # Get watout Header from first watout file
+                   req(input$watoutFiles)
+                   simTime <- getWatoutData()[[length(getWatoutData())]]
+                   updateSliderInput(session, 
+                                     "dateRange", 
+                                     min = simTime[1],
+                                     max = simTime[length(simTime)])
+                   
+                   
+                 })  
                  
                  # ---------------------------------------Update select variable
                  observe({
