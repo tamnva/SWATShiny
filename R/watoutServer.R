@@ -71,25 +71,34 @@ watoutServer <- function(id) {
                    }
                    
                  })
-                 
+
+                 # -------------------------------------Get observed watout data
+                
+                 obsWatout <- reactive({
+                   getObsWatout(input$observedFile$datapath)
+                 })
                  
                  #--------------------------------------------------------------Plot watout.dat
                  output$plotQ <- renderPlotly({
+                   
+                   # Simulated data
+                   simTime <- getWatoutData()[[length(getWatoutData())]]
+                   watout <- getWatoutData()[[1]]  #--------------
+                   
+                   sIndex <- which(simTime == input$dateRange[1])
+                   eIndex <- which(simTime == input$dateRange[2])
                  
-                 simTime <- getWatoutData()[[length(getWatoutData())]]
-                 watout <- getWatoutData()[[1]]
-                 sIndex <- which(simTime == input$dateRange[1])
-                 eIndex <- which(simTime == input$dateRange[2])
+                   simTime <- simTime[sIndex:eIndex] 
+                   watout <- watout[sIndex:eIndex]
                  
-                 myplot <- plot_ly(x = ~simTime[sIndex:eIndex],
-                                   y = ~watout[sIndex:eIndex],
-                                   mode = 'lines'
-                                   )
                  
-                 myplot <- myplot %>% layout(xaxis = list (title = ''),
-                                             yaxis = list (title = ''))
-                
-                 myplot
+                   # Observed data
+                   #obs <- # Simulated data
+                   
+                   myplot <- plot_ly()
+                   myplot <- add_trace(myplot, x = obsWatout()[,1], y = obsWatout()[,2], mode = "lines")
+                   myplot <- add_trace(myplot, x = simTime, y = watout, mode = "lines")
+                   myplot
                  
                  })  
                  
