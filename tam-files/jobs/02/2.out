@@ -1,0 +1,25 @@
+Loading registry: C:/Users/nguyenta/Documents/GitHub/SWATShiny/tam-files/registry.RData
+Loading conf: C:/Users/nguyenta/Documents/GitHub/SWATShiny/tam-files/conf.RData
+2021-02-18 00:08:02: Starting job on node HDG119.
+Auto-mailer settings: start=none, done=none, error=none.
+Setting work dir: C:/Users/nguyenta/Documents/GitHub/SWATShiny
+Loading jobs from file 'C:/Users/nguyenta/Documents/GitHub/SWATShiny/tam-files/jobs/02/2.rds'
+########## Executing jid=2 ##########
+Timestamp: 2021-02-18 00:08:02
+BatchJobs job:
+  Job id: 2
+  Fun id: 46405ad349c59c154a940d721f5abd9f
+  Name: NA
+  Seed: 590540547
+  Pars: <unnamed>=2
+Setting seed: 590540547
+Result:
+ int [1:6] 1 2 3 4 5 6
+NULL
+Writing result file: C:/Users/nguyenta/Documents/GitHub/SWATShiny/tam-files/jobs/02/2-result.RData
+2021-02-18 00:08:04: All done.
+Setting work back to: C:/Users/nguyenta/Documents/GitHub/SWATShiny
+Memory usage according to gc:
+          used  (Mb) gc trigger  (Mb) max used  (Mb)
+Ncells 1912728 102.2    3502785 187.1  1923519 102.8
+Vcells 3419959  26.1   10146329  77.5  3425295  26.2
