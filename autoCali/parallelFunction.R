@@ -50,7 +50,7 @@
 
 # ------------------------------------------------------------------------------ 
 # Function to call SWAT
-  runSWAT <- function(coreNumber, workingDirectory, swatExe, 
+  runSWAT <- function(coreNumber, workingDirectory, swatExe, trimIndex,
                       caliParam, subParameterSet, saveOutput){
     
     setwd(paste(workingDirectory, '/', 'TxtInOut', '_', coreNumber, sep = ""))
@@ -72,7 +72,8 @@
       system(trimws(exeFile[length(exeFile)]))
       
       # Read and write output
-      readOutputRch(subParameterSet[i,1], toDir, workingDirectory, saveOutput)
+      readOutputRch(subParameterSet[i,1], toDir, workingDirectory, 
+                    trimIndex, saveOutput)
       
       write(paste('Current simulation number: ', i, 
                   '/', nrow(subParameterSet), 

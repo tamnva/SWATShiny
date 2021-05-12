@@ -3,7 +3,7 @@
 
 # ------------------------------------------------------------------------------
 # Read output.rch
-  readOutputRch <- function(simNr, dir, workingDirectory, saveOutput){
+  readOutputRch <- function(simNr, dir, workingDirectory, trimIndex, saveOutput){
     
     outputRch <- paste(dir, '/output.rch', sep ='')
     
@@ -11,6 +11,7 @@
                              header = FALSE,
                              sep = "",
                              skip = 9)
+    
     numberReach <- length(saveOutput$outrch$reachNumber)
     maxReach <- max(outputData$V2)
     numberVar <- length(saveOutput$outrch$dataColumn)
@@ -35,6 +36,7 @@
     }
    
     # Trim data
+    extractData <- extractData[trimIndex[1]: trimIndex[2],]
     
     # Save to outputDir
     fileName <- strsplit(dir, 
@@ -63,13 +65,15 @@
 
 # ------------------------------------------------------------------------------
 # Read watout.dat
-  readWatoutDat <- function(simNr, dir, workingDirectory, saveOutput){
+  readWatoutDat <- function(simNr, dir, workingDirectory, 
+                            trimIndex, saveOutput){
     
     outputRch <- paste(dir, '/watout.dat', sep ='')
     outputData <- read.table(outputRch, header = FALSE,sep = "",skip = 6)
 
     numberVar <- length(saveOutput$watout$dataColumn)
     outputData <- outputData[,c(saveOutput$watout$dataColumn)]
+    
     
     # Save to output directory
     fileName <- strsplit(dir, split="_")[[1]]
@@ -122,16 +126,53 @@
     info$timeStepCode <- as.numeric(substr(fileCio[59],13,16))
     
     if (info$timeStepCode == 0){
-      info$timeStepCode = seq(startEval, endSim, by="months")
+      info$timeSeries = seq(startEval, endSim, by="months")
     } else if (info$timeStepCode == 1){
-      info$timeStepCode =  seq(startEval, endSim, by="days")
+      info$timeSeries =  seq(startEval, endSim, by="days")
     } else {
-      info$timeStepCode = seq(startEval, endSim, by="years")
+      info$timeSeries = seq(startEval, endSim, by="years")
     }
     
     
     return(info)
   }
 
+# ------------------------------------------------------------------------------ 
+# get index of period
+  
+  getIndex <- function(fileCio, selectedPeriod){
+    
+    timeSeries <- fileCio$timeSeries
+    timeStep <- fileCio$timeStepCode 
+    startDate <- selectedPeriod$startDate
+    endDate <- selectedPeriod$endDate
+    
+    if (timeStep == 1){
+      for (i in 1:length(timeSeries)){
+        if (timeSeries[i] == startDate){ index <- i}
+        if (timeSeries[i] == endDate){ index <- c(index, i)}
+      }
+    } else if (timeStep == 0){
+      
+      startDate <- as.Date(paste(format(as.Date(startDate), "%Y-%m"), "-01", sep =''), "%Y-%m-%d")
+      endDate <- as.Date(paste(format(as.Date(endDate), "%Y-%m"), "-01", sep =''), "%Y-%m-%d")
+      
+      for (i in 1:length(timeSeries)){
+        if (timeSeries[i] == startDate){ index <- i}
+        if (timeSeries[i] == endDate){ index <- c(index, i)}
+      }      
+    } else {
+      
+      startDate <- as.Date(paste(format(as.Date(startDate), "%Y"), "-01-01", sep =''), "%Y-%m-%d")
+      endDate <- as.Date(paste(format(as.Date(endDate), "%Y"), "-01-01", sep =''), "%Y-%m-%d")
+      
+      for (i in 1:length(timeSeries)){
+        if (timeSeries[i] == startDate){ index <- i}
+        if (timeSeries[i] == endDate){ index <- c(index, i)}
+      }      
+    }
+    return(index)
+  }
+  
   
   
