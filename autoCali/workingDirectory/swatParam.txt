@@ -90,7 +90,7 @@ COEFF_RSP.sep            21      1              13            3
 COEFF_SLG1.sep           22      1              13            5
 COEFF_SLG2.sep           23      1              13            3
 COEFF_NITR.sep           24      1              13            3
-COEFF_DENITR.sep        25      1              13            3
+COEFF_DENITR.sep         25      1              13            3
 COEFF_COEFF_PDISTRB.sep  26      1              13            5
 COEFF_PSORPMAX.sep       27      1              13            3
 COEFF_SOLPSLP.sep        28      1              13            3

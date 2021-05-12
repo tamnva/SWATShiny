@@ -7,14 +7,18 @@
     
     outputRch <- paste(dir, '/output.rch', sep ='')
     
-    outputData <- read.table(outputRch, header = FALSE,sep = "",skip = 9)
+    outputData <- read.table(outputRch, 
+                             header = FALSE,
+                             sep = "",
+                             skip = 9)
     numberReach <- length(saveOutput$outrch$reachNumber)
     maxReach <- max(outputData$V2)
     numberVar <- length(saveOutput$outrch$dataColumn)
     outputData <- outputData[,c(2,saveOutput$outrch$dataColumn)]
     nrows <- nrow(outputData)/maxReach
     
-    extractData <- matrix(rep(NA, numberReach*numberVar*nrows), nrow = nrows)
+    extractData <- matrix(rep(NA,numberReach*numberVar*nrows), 
+                          nrow = nrows)
     counter <- 0
     
     for (i in 1:nrows){
@@ -33,11 +37,28 @@
     # Trim data
     
     # Save to outputDir
-    fileName <- strsplit(dir, split="_")[[1]]
+    fileName <- strsplit(dir, 
+                         split="_")[[1]]
+    
     fileName <- trimws(fileName[length(fileName)])
-    fileName <- paste(workingDirectory, '/Output/output_', fileName,'.rch', sep ='')
-    write.table(simNr, fileName, append = TRUE,row.names = FALSE,col.names = FALSE)
-    write.table(extractData, fileName, append = TRUE,sep = '\t', row.names = FALSE,col.names = FALSE)
+    
+    fileName <- paste(workingDirectory, 
+                      '/Output/output_', 
+                      fileName,
+                      '.rch', 
+                      sep ='')
+    write.table(simNr, 
+                fileName, 
+                append = TRUE,
+                row.names = FALSE,
+                col.names = FALSE)
+    
+    write.table(extractData, 
+                fileName, 
+                append = TRUE,
+                sep = '\t', 
+                row.names = FALSE,
+                col.names = FALSE)
   }
 
 # ------------------------------------------------------------------------------
