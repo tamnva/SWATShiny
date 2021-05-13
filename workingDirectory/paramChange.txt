@@ -1,0 +1,37 @@
+!-------------------------------------------------------------------------------------------------------
+!---This is comment line
+!---Line start with ! or blank line will be ignored by the program
+!---abs = absolute change:  updatedValue = oldValue + applyValue
+!---rel = relative change:  updatedValue = oldValue * (1 + applyValue)
+!---rep = replace change:   updatedValue = applyValue
+
+!-----------------------------------------------------------------------------------------------------
+!   Parameters    ChangeMethod(applyValue)    Subbasin    LandUse       Soil                     Slope
+!-----------------------------------------------------------------------------------------------------
+GW_DELAY.gw   &   abs (30.0, 450.0)  &         1,2     &    All     &     XAFERRIT, XAMMUN      &   5-9999   
+GW_REVAP.gw   &   rel (0.1, 0.9)     &         All     &    FRSE    &     All                   &   All      
+SURLAG.hru    &   rep (0.1, 2.0)     &         2,6     &    All     &     XAFERRIT, XAMMUN      &   5-9999   
+CH_N2.rte     &   rep (0.1, 0.5)     &         2,3     &    -       &     -                     &   - 
+
+!-------------------Original TxtInOut folder
+!C:/Users/nguyenta/Documents/para/TxtInOut
+
+!-------------------Working directory (to store all input/output files)
+!C:/Users/nguyenta/Documents/para/workingDirectory
+
+!-------------------Executable SWAT file (.exe) file 
+!C:/SWAT/ArcSWAT/swat_64rel.exe
+
+!-------------------Observed data files
+!C:/Users/nguyenta/Documents/para/Observed/observed.txt
+
+!-------------------Output files
+!output.rch   & 1,3    &    7,9   &  1993-03-04      1996-09-12
+!watout.dat   
+
+
+!-------------------Number of model evaluations/simulations on n cores
+!40    4
+
+!------------------------------Objective functions
+!NSE
