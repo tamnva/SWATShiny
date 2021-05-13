@@ -1,9 +1,0 @@
-<PAMDataset>
-  <PAMRasterBand band="1">
-    <Description>ClipDem</Description>
-    <NoDataValue>-3.27680000000000E+004</NoDataValue>
-    <Metadata>
-      <MDI key="RepresentationType">THEMATIC</MDI>
-    </Metadata>
-  </PAMRasterBand>
-</PAMDataset>
