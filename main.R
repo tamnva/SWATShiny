@@ -1,19 +1,16 @@
 #-------------------------------------------------------------------------------
-
-# Call source file
-source("C:/Users/nguyenta/Documents/para/loadPackages.R")
-source("C:/Users/nguyenta/Documents/para/parallelFunction.R")
-source("C:/Users/nguyenta/Documents/para/readSaveOutput.R")
-source("C:/Users/nguyenta/Documents/para/parallelFunction.R")
-source("C:/Users/nguyenta/Documents/para/updateTxtInOut.R")
-source("C:/Users/nguyenta/Documents/para/postProcessing.R") 
+source("C:/Users/nguyenta/Documents/GitHub/SWATShiny/Rcode/readSaveOutput.R")
+source("C:/Users/nguyenta/Documents/GitHub/SWATShiny/Rcode/runSWAT.R")
+source("C:/Users/nguyenta/Documents/GitHub/SWATShiny/Rcode/updateTxtInOut.R")
+source("C:/Users/nguyenta/Documents/GitHub/SWATShiny/Rcode/postProcessing.R") 
+source("C:/Users/nguyenta/Documents/GitHub/SWATShiny/Rcode/loadPackages.R") 
 
 #-------------------------------------------------------------------------------	
 # User define input
-  TxtInOut <- 'C:/Users/nguyenta/Documents/para/TxtInOut'
-  workingDirectory <- 'C:/Users/nguyenta/Documents/para/workingDirectory'
+  TxtInOut <- 'C:/Users/nguyenta/Documents/GitHub/SWATShiny/TxtInOut'
+  workingDirectory <- 'C:/Users/nguyenta/Documents/GitHub/SWATShiny/workingDirectory'
   swatExe <- 'C:/SWAT/ArcSWAT/swat_64rel.exe'
-  obsFiles <- c("C:/Users/nguyenta/Documents/para/workingDirectory/Observed/observed.txt")
+  obsFiles <- c("C:/Users/nguyenta/Documents/GitHub/SWATShiny/workingDirectory/Observed/observed.txt")
   
   saveOutput <- list()
   saveOutput$file <- c('output.rch')
@@ -30,8 +27,35 @@ source("C:/Users/nguyenta/Documents/para/postProcessing.R")
   # Parameter sampling
   parameterValue <- lhsRange(nIter, getParamRange(paste(workingDirectory, '/paramChange.txt', sep ='')))
   
-  # Run SWAT parallel
-  runSWATpar(workingDirectory, TxtInOut, saveOutput, numberOfCores, swatExe, parameterValue)
+  # Load all SWAT parameters
+  swatPara <- loadSwatParam(paste(workingDirectory,
+                                  '/swatParam.txt', 
+                                  sep =''))
+  
+  # File name that define the parameters to be updated
+  paramChangeFile <- paste(workingDirectory, '/paramChange.txt', sep ='')
+  
+  # Load HRU information (land use, soil, slope, subbasin)
+  HRUinfo <- getHruInfo(TxtInOut)
+  
+  # Load all files that are going to be updated
+  caliParam <- loadParamChangeFileContent(paramChangeFile, 
+                                          HRUinfo, 
+                                          swatPara, 
+                                          TxtInOut)
+  # Run SWAT parallel on numberOfCores
+  copyUnchangeFiles <-  TRUE
+  runSWATpar(workingDirectory, 
+             TxtInOut, 
+             saveOutput, 
+             numberOfCores, 
+             swatExe, 
+             parameterValue,
+             paramChangeFile,
+             HRUinfo,
+             swatPara,
+             caliParam,
+             copyUnchangeFiles)
   
   # Global Parameter Sensitivity (using linear regression)
   outData <- getOutput(workingDirectory, numberOfCores, saveOutput, parameterValue)
