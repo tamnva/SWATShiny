@@ -1,5 +1,6 @@
 #-------------------------------------------------------------------------------
-  objFunctionValue <- function(obs, sim){
+# Evaluate model performance (single variable)
+  perCriteria <- function(obs, sim){
 
     missingValue <- which(is.na(obs))
     
@@ -31,6 +32,7 @@
   }
   
 #-------------------------------------------------------------------------------
+# Read observed data
   readObs <- function(obsFiles){
     obsData <- list()
     for (i in 1:length(obsFiles)){
@@ -41,25 +43,53 @@
     return(obsData)
   }
 
-#-------------------------------------------------------------------------------  
+#-------------------------------------------------------------------------------
+# Calcualte objective function values for all variables, all simulations
   objFuncValue <- function(outData, obsData){
     
-    nPerformanceCriteria <- 4
-    objFunctionValue <- matrix(rep(0, nPerformanceCriteria * length(outData$file[[1]]$iter )), ncol = nPerformanceCriteria)
+    nStatisticalIndex <- 4
+    colName <- c('NSE', 'KGE', 'R2', 'PBIAS')
+    
+    
+    nfiles <- length(outData$file)
+    niter <- length(outData$file[[1]]$iter)
+
+    temp <- 0
+    for (i in 1:nfiles){
+      temp = temp + length(outData$file[[i]]$iter[[1]]$variable) * nStatisticalIndex
+    }
+    
+    objFunctionValue <- matrix(rep(0, niter *  temp), nrow = niter)
+    counter <- 0
+    istart <- 0
+    iend <- 0
     
     # Loop over number of output file types
-    for (i in 1:length(outData$file)){
+    header <- c()
+    
+    for (i in 1:nfiles){
       #Loop over number of Iterations
-      for (j in 1:length(outData$file[[i]]$iter)){
+      nVariable <- length(outData$file[[i]]$iter[[1]]$variable)
+      counter <- iend
+      
+      for (j in 1:niter){
         #Loop over number of variable
-        temp <- rep(0, nPerformanceCriteria)
-        for (k in 1:length(outData$file[[i]]$iter[[j]]$variable)){
-          temp <- temp + objFunctionValue(obsData$file[[i]]$variable[,k+1], outData$file[[i]]$iter[[j]]$variable[[k]])
+        for (k in 1:nVariable){
+          
+          if (j == 1){
+            header <- c(header, paste(colName, "_File_", i, "_Variable_", k, sep = ""))
+          }
+          
+          temp <- perCriteria(obsData$file[[i]]$variable[,k+1], outData$file[[i]]$iter[[j]]$variable[[k]])
+          istart <- counter + 1 + (k-1) * nStatisticalIndex
+          iend <- counter +  k * nStatisticalIndex
+          objFunctionValue[j,istart:iend] <- temp
         }
-        objFunctionValue[j,] <- objFunctionValue[j,] + temp/k
       }
     }
-    colnames(objFunctionValue) <- c('NSE', 'KGE', 'R2', 'PBIAS')
+    
+    colnames(objFunctionValue) <- header
+    
     return(objFunctionValue)
   }
   
@@ -67,7 +97,13 @@
   linearRegression <- function(objFunction, parameterValue, objCriteria){
     
     parameterValue <- as.data.frame(parameterValue)
-    temp <- colnames(objFunction)
+    
+    header <- strsplit(colnames(objFunction), split = "_")
+    temp <- c()
+    for (i in 1:length(header)){
+      temp <- c(temp, header[[i]][1])
+    }
+
     temp <- which(temp %in% objCriteria)
     
     if (length(temp) > 1) {

@@ -155,6 +155,7 @@
   }
   
 #-------------------------------------------------------------------------------
+# Read output data
   getOutput <- function(workingDirectory, numberOfCores, saveOutput, parameterValue){
     outputData <- list()
     outputData$file <- list()
@@ -168,7 +169,7 @@
         fileName <- strsplit(saveOutput$file[i], split="[.]")[[1]]
         fileName <- paste(workingDirectory, "/Output/", fileName[1], "_", j, ".", fileName[2], sep ="")
         
-        tempData <- read.table(fileName, header = FALSE,sep = "",skip = 0)
+        tempData <- read.delim(fileName, header = FALSE,sep = "",skip = 0)
         ntimeStep <- nrow(tempData)/niter
         
         for (k in 1:niter){
@@ -176,9 +177,9 @@
           istart <- (k-1) * ntimeStep + 2
           iend <- k*ntimeStep
           outputData$file[[i]]$iter[[counter]] <- list()
-          
+
+          outputData$file[[i]]$iter[[counter]]$variable <- list()          
           for (m in 1:ncol(tempData)){
-            outputData$file[[i]]$iter[[counter]]$variable <- list()
             outputData$file[[i]]$iter[[counter]]$variable[[m]] <- tempData[istart:iend,m]
           }
         }        
