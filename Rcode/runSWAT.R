@@ -56,15 +56,14 @@
     numberSubset <- as.integer(numberParameterSet/numberOfCores)
     
     if (numberOfCores > 1){
-      for (i in 1:(numberOfCores-1)){
+      for (i in 1:(numberOfCores)){
         istart <- (i-1) * numberSubset + 1
         iend <- i * numberSubset
         subParameterSet[[i]] <- parameterValue[istart:iend,]
       }      
+    } else {
+      subParameterSet[[1]] <- parameterValue[,]
     }
-
-    subParameterSet[[numberOfCores]] <- parameterValue[(iend + 1):
-                                                         numberParameterSet,]
     
     return(subParameterSet)
   }
@@ -91,7 +90,12 @@
     toDir <- getwd()
     
     # Number of parameter sets
+    if(is.vector(subParameterSet)){
+      subParameterSet <- matrix(subParameterSet, nrow = 1)
+      }
     nParam <- ncol(subParameterSet)
+    
+
     
     # Loop over number of parameter sets
     for (i in 1:nrow(subParameterSet)) {
@@ -117,6 +121,8 @@
                     trimIndex, 
                     saveOutput)
       
+      
+      # Write .log file
       write(paste('Current simulation number: ', 
                   i, 
                   '/', 

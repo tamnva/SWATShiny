@@ -1,6 +1,7 @@
 
 # ------------------------------------------------------------------------------
-# Update a list of files
+# Convert subbasin number to subbasin name
+
   subtofilename <- function(sub){
     if(sub < 10){
       filename <- paste("0000", sub, "0000", sep="")
@@ -17,7 +18,8 @@
   }
 
 # ------------------------------------------------------------------------------
-# Function to update numbers in a file
+# Update numbers in a file
+  
 	updateSingleFile <- function(toDir,
 	                             file,
 	                             fileContent,
@@ -27,7 +29,7 @@
 	                             applyValue,
 	                             numberFormat){
 	  
-	  newFile <- fileContent
+	  newfileContent <- fileContent
 
 	  for (i in 1:length(atLine)){
 
@@ -36,9 +38,9 @@
 	      if (atLine[i] >= 8){
 	        
 	        nchars <- atPosition[i,2] - atPosition[i,1]
-	        nlayer <- length(strsplit(trimws(substr(newFile[atLine[i]],
+	        nlayer <- length(strsplit(trimws(substr(newfileContent[atLine[i]],
 	                                                atPosition[i,1], 
-	                                                nchar(newFile[atLine[i]]))), 
+	                                                nchar(newfileContent[atLine[i]]))), 
 	                                  split = "\\s+")[[1]])
 	        
 	        for (j in 1:nlayer){
@@ -47,7 +49,7 @@
 	            atPosition[i,1] <- atPosition[i,2] + 1 
 	            atPosition[i,2] <- atPosition[i,1] + nchars
 	          }
-	          parameterValue <- as.double(substr(newFile[atLine[i]],
+	          parameterValue <- as.double(substr(newfileContent[atLine[i]],
 	                                             atPosition[i,1],
 	                                             atPosition[i,2]))
 	          
@@ -61,11 +63,11 @@
 	          
 	          toText <- sprintf(numberFormat[i], newParameterValue)
 	          
-	          substr(newFile[atLine[i]], atPosition[i,1], atPosition[i,2]) <- toText	          
+	          substr(newfileContent[atLine[i]], atPosition[i,1], atPosition[i,2]) <- toText	          
 	        }
 	        
 	      } else {
-	        parameterValue <- as.double(substr(newFile[atLine[i]],
+	        parameterValue <- as.double(substr(newfileContent[atLine[i]],
 	                                           atPosition[i,1],
 	                                           atPosition[i,2]))
 	        
@@ -79,12 +81,12 @@
 	        
 	        toText <- sprintf(numberFormat[i], newParameterValue)
 	        
-	        substr(newFile[atLine[i]], atPosition[i,1], atPosition[i,2]) <- toText	        
+	        substr(newfileContent[atLine[i]], atPosition[i,1], atPosition[i,2]) <- toText	        
 	        
 	      }
 	      
 	    } else {
-	      parameterValue <- as.double(substr(newFile[atLine[i]],
+	      parameterValue <- as.double(substr(newfileContent[atLine[i]],
 	                                         atPosition[i,1],
 	                                         atPosition[i,2]))
 	      
@@ -98,16 +100,16 @@
 	      
 	      toText <- sprintf(numberFormat[i], newParameterValue)
 	      
-	      substr(newFile[atLine[i]], atPosition[i,1], atPosition[i,2]) <- toText	      
+	      substr(newfileContent[atLine[i]], atPosition[i,1], atPosition[i,2]) <- toText	      
 	    }
 
 	  }
 
-	  writeLines(newFile,paste(toDir, '/', file, sep = ''))
+	  writeLines(newfileContent,paste(toDir, '/', file, sep = ''))
 	}
 
 # ------------------------------------------------------------------------------
-# Function to update many files in a folder
+# Update multiple files in a folder
 
 	updateMultiFile <-  function(toDir,caliParam){
 

@@ -1,29 +1,33 @@
-#-------------------------------------------------------------------------------
-source("C:/Users/nguyenta/Documents/GitHub/SWATShiny/Rcode/readSaveOutput.R")
-source("C:/Users/nguyenta/Documents/GitHub/SWATShiny/Rcode/runSWAT.R")
-source("C:/Users/nguyenta/Documents/GitHub/SWATShiny/Rcode/updateTxtInOut.R")
-source("C:/Users/nguyenta/Documents/GitHub/SWATShiny/Rcode/postProcessing.R") 
-source("C:/Users/nguyenta/Documents/GitHub/SWATShiny/Rcode/loadPackages.R") 
 
-#-------------------------------------------------------------------------------	
+#------------------------------------------------------------------------------- 
 # User define input
+  RcodeDirectory <- 'C:/Users/nguyenta/Documents/GitHub/SWATShiny/Rcode'
   TxtInOut <- 'C:/Users/nguyenta/Documents/GitHub/SWATShiny/TxtInOut'
   workingDirectory <- 'C:/Users/nguyenta/Documents/GitHub/SWATShiny/workingDirectory'
   swatExe <- 'C:/SWAT/ArcSWAT/swat_64rel.exe'
-  obsFiles <- c("C:/Users/nguyenta/Documents/GitHub/SWATShiny/workingDirectory/Observed/observed.txt")
+  obsFiles <- c('C:/Users/nguyenta/Documents/GitHub/SWATShiny/workingDirectory/Observed/observed.txt')
   
   saveOutput <- list()
   saveOutput$file <- c('output.rch')
-  saveOutput$reachNumber <- c(1,8)
-  saveOutput$column <- c(7,8)
+  
+  # This is for output.rch (only necessary for output.rch, otherwise, ignore this )
+  saveOutput$reachNumber <- c(8)
+  saveOutput$reachColumn <- c(7)
+  
+  # This is for output.rch (only necessary for watout.dat, otherwise, ignore this )
+  #saveOutput$watoutColumn <- c(4,5)
+  
   saveOutput$date <- as.Date(c("1993-03-04","1996-09-12"), "%Y-%m-%d")
 
-  nIter <- 12
-  numberOfCores <- 4
+  nIter <- 1
+  numberOfCores <- 1
   objCriteria <- c("NSE", "KGE")
   behaThreshold <- c(0.7)
 
-#-------------------------------------------------------------------------------  
+#-------------------------------------------------------------------------------
+  # Load all Rcode in
+  sapply(list.files(RcodeDirectory, full.names = TRUE), source)
+  
   # Parameter sampling
   parameterValue <- lhsRange(nIter, getParamRange(paste(workingDirectory, '/paramChange.txt', sep ='')))
   
@@ -45,6 +49,7 @@ source("C:/Users/nguyenta/Documents/GitHub/SWATShiny/Rcode/loadPackages.R")
                                           TxtInOut)
   # Run SWAT parallel on numberOfCores
   copyUnchangeFiles <-  TRUE
+  
   runSWATpar(workingDirectory, 
              TxtInOut, 
              saveOutput, 
@@ -56,6 +61,7 @@ source("C:/Users/nguyenta/Documents/GitHub/SWATShiny/Rcode/loadPackages.R")
              swatPara,
              caliParam,
              copyUnchangeFiles)
+
   
   # Global Parameter Sensitivity (using linear regression)
   outData <- getOutput(workingDirectory, numberOfCores, saveOutput, parameterValue)

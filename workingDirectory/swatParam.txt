@@ -138,3 +138,26 @@ CH_BNK_TC.rte    22              1              14            2
 CH_BED_TC.rte    23              1              14            2
 CH_ERODMO.rte    24              1               6            2
 CH_EQN.rte       25              1              14            0
+!--------------------------------------------------------------
+NMGT.mgt          2              1              16            0
+IGRO.mgt          4              1              16            0
+PLANT_ID.mgt      5              1              16            0
+LAI_INIT.mgt      6              1              16            2
+BIO_INIT.mgt      7              1              16            2
+PHU_PLT.mgt       8              1              16            2
+BIOMIX.mgt       10              1              16            2
+CN2.mgt          11              1              16            2
+USLE_P.mgt       12              1              16            2
+BIO_MIN.mgt      13              1              16            2
+FILTERW.mgt      14              1              16            3
+IURBAN.mgt       16              1              16            0
+URBLU.mgt        17              1              16            0
+IRRSC.mgt        19              1              16            0
+IRRNO.mgt        20              1              16            0
+FLOWMIN.mgt      21              1              16            3
+DIVMAX.mgt       22              1              16            3
+FLOWFR.mgt       23              1              16            3
+DDRAIN.mgt       25              1              16            3
+TDRAIN.mgt       26              1              16            3
+GDRAIN.mgt       27              1              16            3
+NROT.mgt         29              1              16            0

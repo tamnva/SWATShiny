@@ -5,62 +5,74 @@
 # Read output.rch
   readOutputRch <- function(simNr, dir, workingDirectory, trimIndex, saveOutput){
     
-    outputRch <- paste(dir, '/', saveOutput$file[1], sep ='')
-    outputData <- read.table(outputRch, header = FALSE, sep = "", skip = 9)
+    # If saveOutput$file <- c('output.rch', 'watout.dat')
     
-    numberReach <- length(saveOutput$reachNumber)
-    maxReach <- max(outputData$V2)
-    numberVar <- length(saveOutput$column)
-    outputData <- outputData[,c(2,saveOutput$column)]
-    nrows <- nrow(outputData)/maxReach
+    rch <- which(saveOutput$file == 'output.rch')
     
-    extractData <- matrix(rep(NA,numberReach*numberVar*nrows), nrow = nrows)
-    
-    counter <- 0
-    
-    for (i in 1:nrows){
-      for (j in 1:maxReach){
-        counter <- counter + 1
-        for(k in 1:numberReach){
-          if (outputData[counter,1] == saveOutput$reachNumber[k]) {
-            istart <- (k-1)*numberVar + 1
-            iend <- k*numberVar
-            extractData[i,istart:iend] <- as.numeric(outputData[counter,2:(numberVar+1)])        
-          }
-        }        
+    watout <- c()
+    for (i in 1:length(saveOutput$file)){
+      if (substr(saveOutput$file[i], 1, 6 ) == "watout"){
+        watout <- c(watout, i)
       }
     }
-   
-    # Trim data
-    extractData <- extractData[trimIndex[1]: trimIndex[2],]
     
-    # Save to outputDir
-    fileName <- strsplit(dir,split="_")[[1]]
-    fileName <- trimws(fileName[length(fileName)])
+    if ('output.rch'  %in% saveOutput$file){
+      outputRch <- paste(dir, '/', saveOutput$file[rch], sep ='')
+      outputData <- read.table(outputRch, header = FALSE, sep = "", skip = 9)
+      
+      numberReach <- length(saveOutput$reachNumber)
+      maxReach <- max(outputData$V2)
+      numberVar <- length(saveOutput$reachColumn)
+      outputData <- outputData[,c(2,saveOutput$reachColumn)]
+      nrows <- nrow(outputData)/maxReach
+      
+      extractData <- matrix(rep(NA,numberReach*numberVar*nrows), nrow = nrows)
+      
+      counter <- 0
+      
+      for (i in 1:nrows){
+        for (j in 1:maxReach){
+          counter <- counter + 1
+          for(k in 1:numberReach){
+            if (outputData[counter,1] == saveOutput$reachNumber[k]) {
+              istart <- (k-1)*numberVar + 1
+              iend <- k*numberVar
+              extractData[i,istart:iend] <- as.numeric(outputData[counter,2:(numberVar+1)])        
+            }
+          }        
+        }
+      }
+     
+      # Trim data
+      extractData <- extractData[trimIndex[1]: trimIndex[2],]
+      
+      # Save to outputDir
+      fileName <- strsplit(dir,split="_")[[1]]
+      fileName <- trimws(fileName[length(fileName)])
+      
+      fileName <- paste(workingDirectory, '/Output/output_', fileName, '.rch', sep ='')
+      write.table(simNr, fileName, append = TRUE,row.names = FALSE,col.names = FALSE)
+      write.table(extractData, fileName, append = TRUE,sep = '\t', row.names = FALSE, col.names = FALSE)
+      
+    } 
     
-    fileName <- paste(workingDirectory, '/Output/output_', fileName, '.rch', sep ='')
-    write.table(simNr, fileName, append = TRUE,row.names = FALSE,col.names = FALSE)
-    write.table(extractData, fileName, append = TRUE,sep = '\t', row.names = FALSE, col.names = FALSE)
-  }
-
-# ------------------------------------------------------------------------------
-# Read watout.dat
-  readWatoutDat <- function(simNr, dir, workingDirectory, 
-                            trimIndex, saveOutput){
-    
-    outputRch <- paste(dir, '/watout.dat', sep ='')
-    outputData <- read.table(outputRch, header = FALSE,sep = "",skip = 6)
-
-    numberVar <- length(saveOutput$watout$dataColumn)
-    outputData <- outputData[,c(saveOutput$watout$dataColumn)]
-    
-    
-    # Save to output directory
-    fileName <- strsplit(dir, split="_")[[1]]
-    fileName <- trimws(fileName[length(fileName)])
-    fileName <- paste(workingDirectory, '/Output/watout_', fileName,'.dat', sep ='')
-    write.table(simNr, fileName, append = TRUE,row.names = FALSE,col.names = FALSE)
-    write.table(outputData, fileName, append = TRUE,sep = '\t', row.names = FALSE,col.names = FALSE)
+    # Save watout files
+    if (length(watout) > 0){
+      for (i in 1:length(watout)){
+        outputRch <- paste(dir, '/', saveOutput$file[watout[i]], sep ='')
+        outputData <- read.table(outputRch, header = FALSE,sep = "",skip = 6)
+        
+        numberVar <- length(saveOutput$watout$dataColumn)
+        outputData <- outputData[,c(saveOutput$watout$dataColumn)]
+        
+        
+        # Save to output directory
+        fileName <- strsplit(saveOutput$file[watout[i]], split='[.]')[[1]][1]
+        fileName <- paste(workingDirectory, '/Output/', fileName,'_', i, '.dat', sep ='')
+        write.table(simNr, fileName, append = TRUE,row.names = FALSE,col.names = FALSE)
+        write.table(outputData, fileName, append = TRUE,sep = '\t', row.names = FALSE,col.names = FALSE)         
+      }
+    }
   }
   
     
